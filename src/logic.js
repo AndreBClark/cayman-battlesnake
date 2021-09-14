@@ -72,7 +72,7 @@ function move(gameState) {
 
         // each snake segment deducts  from the score of each adjacent square
         for (let i = 0; i < gameState.board.snakes.length; i++) {
-            const deduction = 9;
+            const deduction = 2;
             for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
                 if (gameState.board.snakes[i].body[j].x > 0) {
                     scoreGrid[gameState.board.snakes[i].body[j].x - 1][gameState.board.snakes[i].body[j].y] -= deduction
@@ -81,7 +81,7 @@ function move(gameState) {
                     scoreGrid[gameState.board.snakes[i].body[j].x + 1][gameState.board.snakes[i].body[j].y] -= deduction
                 }
                 if (gameState.board.snakes[i].body[j].y > 0) {
-                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y - 1] -= 1
+                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y - 1] -= deduction
                 }
                 if (gameState.board.snakes[i].body[j].y < gameState.board.height - 1) {
                     scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y + 1] -= deduction
