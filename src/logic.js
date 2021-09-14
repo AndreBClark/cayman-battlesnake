@@ -156,22 +156,10 @@ function move(gameState) {
         })
     }
 
-    // TODO: Step 2 - Don't hit yourself.
-    // Use information in gameState to prevent your Battlesnake from colliding with itself.
-    // const mybody = gameState.you.body
-
-    // TODO: Step 3 - Don't collide with others.
-    // Use information in gameState to prevent your Battlesnake from colliding with others.
-
-    // TODO: Step 4 - Find food.
-    // Use information in gameState to seek out and find food.
-
-    // Finally, choose a move from the available safe moves.
-    // TODO: Step 5 - Select a move to make based on strategy, rather than random.
     // avoidNeck();
     boundaryCheck();
-    const SCOREGRID = scoreNextMove(gameState);
-    console.table(SCOREGRID)
+    scoreNextMove(gameState);
+    // console.table(SCOREGRID)
     const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
     console.table(possibleMoves)
     const response = {
