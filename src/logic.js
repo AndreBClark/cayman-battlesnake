@@ -30,18 +30,15 @@ function move(gameState) {
     const myHead = gameState.you.head
     const myNeck = gameState.you.body[1]
     const myBody = gameState.you.body
-    function avoidNeck() {
-        if (myNeck.x < myHead.x) possibleMoves.left = false
-        else if (myNeck.x > myHead.x) possibleMoves.right = false
-        else if (myNeck.y < myHead.y) possibleMoves.down = false
-        else if (myNeck.y > myHead.y) possibleMoves.up = false
-    }
+
     // TODO: Step 1 - Don't hit walls.
     // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
     const board = {
         x: gameState.board.width - 1,
         y: gameState.board.height - 1
     }
+
+    const isHungry = gameState.you.health < 50
 
     function createScoreGrid(gameState) {
         const scoreGrid = []
@@ -90,21 +87,21 @@ function move(gameState) {
         }
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += 50
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 50 : 5
         }
         // cells adjacent to food get a bonus
         for (let i = 0; i < gameState.board.food.length; i++) {
             if (gameState.board.food[i].x > 0) {
-                scoreGrid[gameState.board.food[i].x - 1][gameState.board.food[i].y] += 25
+                scoreGrid[gameState.board.food[i].x - 1][gameState.board.food[i].y] += isHungry ? 25 : 2
             }
             if (gameState.board.food[i].x < gameState.board.width - 1) {
-                scoreGrid[gameState.board.food[i].x + 1][gameState.board.food[i].y] += 25
+                scoreGrid[gameState.board.food[i].x + 1][gameState.board.food[i].y] += isHungry ? 25 : 2
             }
             if (gameState.board.food[i].y > 0) {
-                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y - 1] += 25
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y - 1] += isHungry ? 25 : 2
             }
             if (gameState.board.food[i].y < gameState.board.height - 1) {
-                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y + 1] += 25
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y + 1] += isHungry ? 25 : 2
             }
         }
 
@@ -128,7 +125,9 @@ function move(gameState) {
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
         if (score.right < 0) possibleMoves.right = false
-        const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
+        const safeMoves = Object.keys(possibleMoves).filter(
+            key => possibleMoves[key]
+        )
         const sortedMoves = safeMoves.sort((a, b) => {
             return score[b] - score[a]
         })
@@ -136,9 +135,6 @@ function move(gameState) {
         const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
         return bestMove
     }
-        
-
-
 
     function boundaryCheck() {
         const edges = {
