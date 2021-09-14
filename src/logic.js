@@ -88,6 +88,25 @@ function move(gameState) {
                 }
             }
         }
+        // food increases cell score
+        for (let i = 0; i < gameState.board.food.length; i++) {
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += 50
+        }
+        // cells adjacent to food get a bonus
+        for (let i = 0; i < gameState.board.food.length; i++) {
+            if (gameState.board.food[i].x > 0) {
+                scoreGrid[gameState.board.food[i].x - 1][gameState.board.food[i].y] += 25
+            }
+            if (gameState.board.food[i].x < gameState.board.width - 1) {
+                scoreGrid[gameState.board.food[i].x + 1][gameState.board.food[i].y] += 25
+            }
+            if (gameState.board.food[i].y > 0) {
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y - 1] += 25
+            }
+            if (gameState.board.food[i].y < gameState.board.height - 1) {
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y + 1] += 25
+            }
+        }
 
 
         return scoreGrid
@@ -105,11 +124,17 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
-        console.table(scoreGrid)
         if (score.up < 0) possibleMoves.up = false
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
         if (score.right < 0) possibleMoves.right = false
+        const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
+        const sortedMoves = safeMoves.sort((a, b) => {
+            return score[b] - score[a]
+        })
+        // sort possible moves by score
+        const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
+        return bestMove
     }
         
 
@@ -135,17 +160,8 @@ function move(gameState) {
     }
 
     boundaryCheck();
-    scoreNextMove();
-    const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
-    // sort safemoves by score
-    safeMoves.sort((a, b) => {
-        return possibleMoves[b] - possibleMoves[a]
-    });
-    console.log(safeMoves) 
-    // if there are no safe moves, return random move
-    const bestMove = (safeMoves.length === 0) ? safeMoves[Math.floor(Math.random() * safeMoves.length)] : safeMoves[0]
     const response = {
-        move: bestMove,
+        move: scoreNextMove()
     }
 
     console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
