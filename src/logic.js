@@ -48,7 +48,7 @@ function move(gameState) {
         for (let i = 0; i < gameState.board.width; i++) {
             scoreGrid[i] = []
             for (let j = 0; j < gameState.board.height; j++) {
-                scoreGrid[i][j] = 1
+                scoreGrid[i][j] = 10
             }
         }
         // prevent out of bounds coordinates
@@ -68,8 +68,27 @@ function move(gameState) {
         for (let i = 0; i < gameState.you.body.length; i++) {
             scoreGrid[myBody[i].x][myBody[i].y] = -100
         }
+        scoreGrid[myNeck.x][myNeck.y] = -200;
 
-        scoreGrid[myNeck.x][myNeck.y] = -999;
+        // each snake segment deducts  from the score of each adjacent square
+        for (let i = 0; i < gameState.board.snakes.length; i++) {
+            const deduction = 10;
+            for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
+                if (gameState.board.snakes[i].body[j].x > 0) {
+                    scoreGrid[gameState.board.snakes[i].body[j].x - 1][gameState.board.snakes[i].body[j].y] -= deduction
+                }
+                if (gameState.board.snakes[i].body[j].x < gameState.board.width - 1) {
+                    scoreGrid[gameState.board.snakes[i].body[j].x + 1][gameState.board.snakes[i].body[j].y] -= deduction
+                }
+                if (gameState.board.snakes[i].body[j].y > 0) {
+                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y - 1] -= 1
+                }
+                if (gameState.board.snakes[i].body[j].y < gameState.board.height - 1) {
+                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y + 1] -= deduction
+                }
+            }
+        }
+
 
         return scoreGrid
     }
@@ -86,16 +105,10 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
-        // disable moves
-        // prevent out of bounds coordinates from causing errors
-
-
         if (score.up < 0) possibleMoves.up = false
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
         if (score.right < 0) possibleMoves.right = false
-
-        return scoreGrid
     }
         
 
@@ -156,14 +169,19 @@ function move(gameState) {
         })
     }
 
+
     // avoidNeck();
     boundaryCheck();
-    scoreNextMove(gameState);
-    // console.table(SCOREGRID)
+    scoreNextMove();
     const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
-    console.table(possibleMoves)
+    // sort safemoves by score
+    safeMoves.sort((a, b) => {
+        return possibleMoves[b] - possibleMoves[a]
+    });
+    // if there are no safe moves, return random move
+    const bestMove = (safeMoves.length === 0) ? safeMoves[Math.floor(Math.random() * safeMoves.length)] : safeMoves[0]
     const response = {
-        move: safeMoves[Math.floor(Math.random() * safeMoves.length)],
+        move: bestMove,
     }
 
     console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
