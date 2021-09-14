@@ -48,55 +48,54 @@ function move(gameState) {
         for (let i = 0; i < gameState.board.width; i++) {
             scoreGrid[i] = []
             for (let j = 0; j < gameState.board.height; j++) {
-                scoreGrid[i][j] = 0
+                scoreGrid[i][j] = 1
             }
         }
-        // score out of bounds negative
-        for (let i = 0; i < gameState.board.width; i++) {
-            scoreGrid[i][0] = -1
-            scoreGrid[i][gameState.board.height - 1] = -1
-        }
-        for (let i = 0; i < gameState.board.height; i++) {
-            scoreGrid[0][i] = -1
-            scoreGrid[gameState.board.width - 1][i] = -1
-        }
+        // prevent out of bounds coordinates
         // score food positive
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] = 1
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] = 50
         }
-        // score snakes negative
+        
+        // score snakes other than me negative
         for (let i = 0; i < gameState.board.snakes.length; i++) {
-            const snake = gameState.board.snakes[i]
-            for (let j = 0; j < snake.body.length; j++) {
-                scoreGrid[snake.body[j].x][snake.body[j].y] = -1
+            if (gameState.board.snakes[i].id !== gameState.you.id) {
+                for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
+                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y] = -50
+                }
             }
         }
+        for (let i = 0; i < gameState.you.body.length; i++) {
+            scoreGrid[myBody[i].x][myBody[i].y] = -100
+        }
+
+        scoreGrid[myNeck.x][myNeck.y] = -999;
+
         return scoreGrid
     }
     function scoreNextMove() {
         const scoreGrid = createScoreGrid(gameState)
-        // get adjacent cells
-        const adjacentCells = []
-        if (myHead.x > 0) adjacentCells.push({ x: myHead.x - 1, y: myHead.y })
-        if (myHead.x < board.x) adjacentCells.push({ x: myHead.x + 1, y: myHead.y })
-        if (myHead.y > 0) adjacentCells.push({ x: myHead.x, y: myHead.y - 1 })
-        if (myHead.y < board.y) adjacentCells.push({ x: myHead.x, y: myHead.y + 1 })
-        // get adjacent cell score
-        const adjacentCellScores = []
-        for (let i = 0; i < adjacentCells.length; i++) {
-            adjacentCellScores.push(scoreGrid[adjacentCells[i].x][adjacentCells[i].y])
+        const head = myHead
+        // get scores of cells adjacent to head
+        scoreGrid[head.x + 1] = scoreGrid[head.x + 1] || []
+        scoreGrid[head.y + 1] = scoreGrid[head.y + 1] || []
+        scoreGrid[-1] = scoreGrid[-1] || []
+        const score = {
+            up: scoreGrid[head.x][head.y + 1],
+            down: scoreGrid[head.x][head.y - 1],
+            left: scoreGrid[head.x - 1][head.y],
+            right: scoreGrid[head.x + 1][head.y]
         }
-        // get max score
-        const maxScore = Math.max(...adjacentCellScores)
-        // get max score index
-        const maxScoreIndex = adjacentCellScores.indexOf(maxScore)
-        // get max score cell
-        const maxScoreCell = adjacentCells[maxScoreIndex]
-        // block other moves
-        if (maxScoreCell.x < myHead.x) possibleMoves.left = false
-        else if (maxScoreCell.x > myHead.x) possibleMoves.right = false
-        else if (maxScoreCell.y < myHead.y) possibleMoves.down = false
-        else if (maxScoreCell.y > myHead.y) possibleMoves.up = false
+        // disable moves
+        // prevent out of bounds coordinates from causing errors
+
+
+        if (score.up < 0) possibleMoves.up = false
+        if (score.down < 0) possibleMoves.down = false
+        if (score.left < 0) possibleMoves.left = false
+        if (score.right < 0) possibleMoves.right = false
+
+        return scoreGrid
     }
         
 
@@ -169,12 +168,12 @@ function move(gameState) {
 
     // Finally, choose a move from the available safe moves.
     // TODO: Step 5 - Select a move to make based on strategy, rather than random.
-    avoidNeck();
+    // avoidNeck();
     boundaryCheck();
-    avoidSelfCollision();
-    avoidOtherSnakes();
-    scoreNextMove();
+    const SCOREGRID = scoreNextMove(gameState);
+    console.table(SCOREGRID)
     const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
+    console.table(possibleMoves)
     const response = {
         move: safeMoves[Math.floor(Math.random() * safeMoves.length)],
     }
