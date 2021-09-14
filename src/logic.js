@@ -120,6 +120,7 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
+        boundaryCheck();
         if (score.up < 0) possibleMoves.up = false
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
@@ -133,6 +134,7 @@ function move(gameState) {
         // sort possible moves by score
         const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
         console.table(scoreGrid)
+
         return bestMove
     }
 
@@ -155,7 +157,6 @@ function move(gameState) {
         }
     }
 
-    boundaryCheck();
     const response = {
         move: scoreNextMove()
     }
