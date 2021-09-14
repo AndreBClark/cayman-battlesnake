@@ -66,25 +66,6 @@ function move(gameState) {
             scoreGrid[myBody[i].x][myBody[i].y] = -100
         }
         scoreGrid[myNeck.x][myNeck.y] = -200;
-
-        // each snake segment deducts  from the score of each adjacent square
-        for (let i = 0; i < gameState.board.snakes.length; i++) {
-            const deduction = 8;
-            for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
-                if (gameState.board.snakes[i].body[j].x > 0) {
-                    scoreGrid[gameState.board.snakes[i].body[j].x - 1][gameState.board.snakes[i].body[j].y] -= deduction
-                }
-                if (gameState.board.snakes[i].body[j].x < board.x) {
-                    scoreGrid[gameState.board.snakes[i].body[j].x + 1][gameState.board.snakes[i].body[j].y] -= deduction
-                }
-                if (gameState.board.snakes[i].body[j].y > 0) {
-                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y - 1] -= deduction
-                }
-                if (gameState.board.snakes[i].body[j].y < board.y) {
-                    scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y + 1] -= deduction
-                }
-            }
-        }
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
             scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -10 
