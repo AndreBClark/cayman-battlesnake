@@ -120,7 +120,6 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
-        boundaryCheck();
         if (score.up < 0) possibleMoves.up = false
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
@@ -156,6 +155,7 @@ function move(gameState) {
             right: moves[3]
         }
     }
+    boundaryCheck();
 
     const response = {
         move: scoreNextMove()
