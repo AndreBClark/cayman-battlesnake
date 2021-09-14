@@ -101,10 +101,9 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
-        if (score.up < 0) possibleMoves.up = false
-        if (score.down < 0) possibleMoves.down = false
-        if (score.left < 0) possibleMoves.left = false
-        if (score.right < 0) possibleMoves.right = false
+        Object.values(score).forEach((value, index) => {
+            if (value < 0) Object.values(possibleMoves)[index] = false
+        })
         const safeMoves = Object.keys(possibleMoves).filter(
             key => possibleMoves[key]
         )
