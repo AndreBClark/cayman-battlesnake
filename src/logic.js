@@ -133,45 +133,7 @@ function move(gameState) {
             right: moves[3]
         }
     }
-    function avoidSelfCollision() {
-        myBody.forEach(segment => {
-            if (myHead.x === segment.x - 1 && myHead.y === segment.y) {
-            possibleMoves.right = false
-            }
-            if (myHead.x === segment.x + 1 && myHead.y === segment.y) {
-            possibleMoves.left = false
-            }
-            if (myHead.y === segment.y - 1 && myHead.x === segment.x) {
-            possibleMoves.up = false
-            }
-            if (myHead.y === segment.y + 1 && myHead.x === segment.x) {
-            possibleMoves.down = false
-            }
-        })
-    }
 
-    function avoidOtherSnakes() {
-        const snakes = gameState.board.snakes
-        snakes.forEach(snake => {
-            snake.body.forEach(segment => {
-            if (myHead.x === segment.x - 1 && myHead.y === segment.y) {
-                possibleMoves.right = false
-            }
-            if (myHead.x === segment.x + 1 && myHead.y === segment.y) {
-                possibleMoves.left = false
-            }
-            if (myHead.y === segment.y - 1 && myHead.x === segment.x) {
-                possibleMoves.up = false
-            }
-            if (myHead.y === segment.y + 1 && myHead.x === segment.x) {
-                possibleMoves.down = false
-            }
-            })
-        })
-    }
-
-
-    // avoidNeck();
     boundaryCheck();
     scoreNextMove();
     const safeMoves = Object.keys(possibleMoves).filter(key => possibleMoves[key])
