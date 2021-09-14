@@ -15,7 +15,8 @@ function createGameState(myBattlesnake) {
             snakes: [myBattlesnake],
             hazards: []
         },
-        you: myBattlesnake
+        you: myBattlesnake,
+        food: [],
     }
 }
 
@@ -32,6 +33,7 @@ function createBattlesnake(id, bodyCoords) {
         squad: ""
     }
 }
+
 
 describe('Battlesnake API Version', () => {
     test('should be api version 1', () => {
@@ -229,5 +231,21 @@ describe('Battlesnake Moves', () => {
             const allowedMoves = ["left", "down", "right"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
+    })
+    test('should eat food', () => {
+        // Arrange
+        const me = createBattlesnake("me", [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 }
+        ])
+        const gameState = createGameState(me)
+        gameState.board.food.push({ x: 3, y: 0 })
+
+        // Act
+        const moveResponse = move(gameState)
+
+        // Assert
+        expect(moveResponse.move).toBe("right")
     })
 })
