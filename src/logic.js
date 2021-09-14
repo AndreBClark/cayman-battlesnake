@@ -74,13 +74,13 @@ function move(gameState) {
                 if (gameState.board.snakes[i].body[j].x > 0) {
                     scoreGrid[gameState.board.snakes[i].body[j].x - 1][gameState.board.snakes[i].body[j].y] -= deduction
                 }
-                if (gameState.board.snakes[i].body[j].x < gameState.board.width - 1) {
+                if (gameState.board.snakes[i].body[j].x < board.x) {
                     scoreGrid[gameState.board.snakes[i].body[j].x + 1][gameState.board.snakes[i].body[j].y] -= deduction
                 }
                 if (gameState.board.snakes[i].body[j].y > 0) {
                     scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y - 1] -= deduction
                 }
-                if (gameState.board.snakes[i].body[j].y < gameState.board.height - 1) {
+                if (gameState.board.snakes[i].body[j].y < board.y) {
                     scoreGrid[gameState.board.snakes[i].body[j].x][gameState.board.snakes[i].body[j].y + 1] -= deduction
                 }
             }
