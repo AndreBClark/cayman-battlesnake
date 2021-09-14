@@ -87,21 +87,21 @@ function move(gameState) {
         }
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : 5
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry && 10 
         }
         // cells adjacent to food get a bonus
         for (let i = 0; i < gameState.board.food.length; i++) {
             if (gameState.board.food[i].x > 0) {
-                scoreGrid[gameState.board.food[i].x - 1][gameState.board.food[i].y] += isHungry ? 5 : 2
+                scoreGrid[gameState.board.food[i].x - 1][gameState.board.food[i].y] += isHungry && 5
             }
             if (gameState.board.food[i].x < gameState.board.width - 1) {
-                scoreGrid[gameState.board.food[i].x + 1][gameState.board.food[i].y] += isHungry ? 5 : 2
+                scoreGrid[gameState.board.food[i].x + 1][gameState.board.food[i].y] += isHungry && 5
             }
             if (gameState.board.food[i].y > 0) {
-                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y - 1] += isHungry ? 5 : 2
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y - 1] += isHungry && 5
             }
             if (gameState.board.food[i].y < gameState.board.height - 1) {
-                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y + 1] += isHungry ? 5 : 2
+                scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y + 1] += isHungry && 5
             }
         }
 
