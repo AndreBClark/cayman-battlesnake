@@ -33,12 +33,12 @@ function createBattlesnake(id, bodyCoords) {
     }
 }
 
-// describe('Battlesnake API Version', () => {
-//     test('should be api version 1', () => {
-//         const result = info()
-//         expect(result.apiversion).toBe("1")
-//     })
-// })
+describe('Battlesnake API Version', () => {
+    test('should be api version 1', () => {
+        const result = info()
+        expect(result.apiversion).toBe("1")
+    })
+})
 
 describe('Battlesnake Moves', () => {
     test('should never move into its own neck', () => {
