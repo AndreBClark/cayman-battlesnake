@@ -72,7 +72,7 @@ function move(gameState) {
 
         // each snake segment deducts  from the score of each adjacent square
         for (let i = 0; i < gameState.board.snakes.length; i++) {
-            const deduction = 10;
+            const deduction = 9;
             for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
                 if (gameState.board.snakes[i].body[j].x > 0) {
                     scoreGrid[gameState.board.snakes[i].body[j].x - 1][gameState.board.snakes[i].body[j].y] -= deduction
@@ -105,6 +105,7 @@ function move(gameState) {
             left: scoreGrid[head.x - 1][head.y],
             right: scoreGrid[head.x + 1][head.y]
         }
+        console.table(scoreGrid)
         if (score.up < 0) possibleMoves.up = false
         if (score.down < 0) possibleMoves.down = false
         if (score.left < 0) possibleMoves.left = false
@@ -178,6 +179,7 @@ function move(gameState) {
     safeMoves.sort((a, b) => {
         return possibleMoves[b] - possibleMoves[a]
     });
+    console.log(safeMoves) 
     // if there are no safe moves, return random move
     const bestMove = (safeMoves.length === 0) ? safeMoves[Math.floor(Math.random() * safeMoves.length)] : safeMoves[0]
     const response = {
