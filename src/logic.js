@@ -49,10 +49,6 @@ function move(gameState) {
             }
         }
         // prevent out of bounds coordinates
-        // score food positive
-        for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] = 50
-        }
         
         // score snakes other than me negative
         for (let i = 0; i < gameState.board.snakes.length; i++) {
@@ -68,7 +64,7 @@ function move(gameState) {
         scoreGrid[myNeck.x][myNeck.y] = -200;
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -10 
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -9 
         }
         // cells adjacent to food get a bonus
         for (let i = 0; i < gameState.board.food.length; i++) {
@@ -88,6 +84,7 @@ function move(gameState) {
 
         return scoreGrid
     }
+
     function scoreNextMove() {
         const scoreGrid = createScoreGrid(gameState)
         const head = myHead
