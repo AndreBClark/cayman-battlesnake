@@ -5,7 +5,7 @@ function info() {
         author: "",
         color: "#7EB33D",
         head: "caffeine",
-        tail: ""
+        tail: "default"
     }
     return response
 }
@@ -61,10 +61,11 @@ function move(gameState) {
         for (let i = 0; i < gameState.you.body.length; i++) {
             scoreGrid[myBody[i].x][myBody[i].y] = -100
         }
-        scoreGrid[myNeck.x][myNeck.y] = -200;
+        scoreGrid[myHead.x][myHead.y] -= 300;
+        scoreGrid[myNeck.x][myNeck.y] -= 200;
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -9 
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -8 
         }
         // cells adjacent to food get a bonus
         for (let i = 0; i < gameState.board.food.length; i++) {
