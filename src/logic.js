@@ -74,7 +74,7 @@ function move(gameState) {
             scoreGrid[myBody[i].x][myBody[i].y] -= 20
         }
         scoreGrid[myHead.x][myHead.y] -= 10;
-        scoreGrid[myNeck.x][myNeck.y] -= 20;
+        scoreGrid[myNeck.x][myNeck.y] -= 10;
 
         getAdjacentCells(myBody, gameState.board).forEach(
             cell => scoreGrid[cell.x][cell.y] -= 5
@@ -83,11 +83,11 @@ function move(gameState) {
     function scoreFood(gameState, scoreGrid) {
         // food increases cell score
         for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -8
+            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -6
         }
         // cells adjacent to food get a bonus
         getAdjacentCells(gameState.board.food, gameState.board).forEach(
-            cell => cell += isHungry && 5
+            cell => cell += isHungry ? 5 : 2
         )
     }
 
