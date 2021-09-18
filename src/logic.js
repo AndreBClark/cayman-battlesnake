@@ -91,39 +91,6 @@ function move(gameState) {
         )
     }
 
-    function getAdjacentCells(cells, area) {
-        const adjacentCells = []
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].x > 0) {
-                adjacentCells.push({
-                    x: cells[i].x - 1,
-                    y: cells[i].y
-                })
-            }
-            if (cells[i].x < area.width - 1) {
-                adjacentCells.push({
-                    x: cells[i].x + 1,
-                    y: cells[i].y
-                })
-            }
-            if (cells[i].y > 0) {
-                adjacentCells.push({
-                    x: cells[i].x,
-                    y: cells[i].y - 1
-                })
-            }
-            if (cells[i].y < area.height - 1) {
-                adjacentCells.push({
-                    x: cells[i].x,
-                    y: cells[i].y + 1
-                })
-            }
-        }
-        return adjacentCells
-    }
-
-    // function for double for loop to 
-
     function scoreNextMove() {
         const scoreGrid = createScoreGrid(gameState)
         const head = myHead
@@ -179,6 +146,37 @@ function move(gameState) {
 
     console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
     return response
+}
+
+function getAdjacentCells(cells, area) {
+    const adjacentCells = []
+    for (let i = 0; i < cells.length; i++) {
+        if (cells[i].x > 0) {
+            adjacentCells.push({
+                x: cells[i].x - 1,
+                y: cells[i].y
+            })
+        }
+        if (cells[i].x < area.width - 1) {
+            adjacentCells.push({
+                x: cells[i].x + 1,
+                y: cells[i].y
+            })
+        }
+        if (cells[i].y > 0) {
+            adjacentCells.push({
+                x: cells[i].x,
+                y: cells[i].y - 1
+            })
+        }
+        if (cells[i].y < area.height - 1) {
+            adjacentCells.push({
+                x: cells[i].x,
+                y: cells[i].y + 1
+            })
+        }
+    }
+    return adjacentCells
 }
 
 module.exports = {
