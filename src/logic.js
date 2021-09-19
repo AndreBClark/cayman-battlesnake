@@ -17,136 +17,126 @@ function start(gameState) {
 function end(gameState) {
     console.log(`${gameState.game.id} END\n`)
 }
-
 function move(gameState) {
+    const { you, board } = gameState
+    you.neck = you.body[1]
+    board.edge = {
+        width: gameState.board.width - 1,
+        height: gameState.board.height - 1
+    }
+    const possibleMoves = boundaryCheck(you.head, board);
+    const scoreGrid = createScoreGrid(board, you)
+    const choice = chooseMove(you.head, scoreGrid, possibleMoves)
+    // TODO: Step 1 - Don't hit walls.
+    const response = {
+        move: choice,
+    }
+
+    console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
+    return response
+}
+function boundaryCheck(myHead, board) {
     let possibleMoves = {
         up: true,
         down: true,
         left: true,
         right: true
     }
-
-    // Step 0: Don't let your Battlesnake move back on its own neck
-    const myHead = gameState.you.head
-    const myNeck = gameState.you.body[1]
-    const myBody = gameState.you.body
-
-    // TODO: Step 1 - Don't hit walls.
-    // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
-    const board = {
-        x: gameState.board.width - 1,
-        y: gameState.board.height - 1
+    const edges = {
+        up: myHead.y === board.edge.height,
+        down: myHead.y === 0,
+        left: myHead.x === 0,
+        right: myHead.x === board.edge.width,
     }
-
-    const isHungry = gameState.you.health < 50
-
-    function createScoreGrid(gameState) {
-        const scoreGrid = []
-        // initial score grid
-        for (let i = 0; i < gameState.board.width; i++) {
-            scoreGrid[i] = []
-            for (let j = 0; j < gameState.board.height; j++) {
-                scoreGrid[i][j] = 10
-            }
-        }
-        scoreSelf(gameState, scoreGrid)
-        scoreFood(gameState, scoreGrid)
-        scoreSnakes(gameState, scoreGrid)
-        return scoreGrid
+    let moves = Object.values(possibleMoves);
+    Object.values(edges).forEach((edge, index) => {
+        if (edge) moves[index] = false;
+    })
+    possibleMoves = {
+        up: moves[0],
+        down: moves[1],
+        left: moves[2],
+        right: moves[3]
     }
-    function scoreSnakes(gameState, scoreGrid) {
-        // get coordinates of all snake positions
-        const snakeCoords = []
-        for (let i = 0; i < gameState.board.snakes.length; i++) {
-            for (let j = 0; j < gameState.board.snakes[i].body.length; j++) {
-                snakeCoords.push(gameState.board.snakes[i].body[j])
-            }
-        }
-        snakeCoords.forEach(coord => {
-            scoreGrid[coord.x][coord.y] -= 12
-        })
-        getAdjacentCells(snakeCoords, gameState.board).forEach(
-            cell => scoreGrid[cell.x][cell.y] -= 8
-        )
-    }
-    function scoreSelf(gameState, scoreGrid) {
-        for (let i = 0; i < gameState.you.body.length; i++) {
-            scoreGrid[myBody[i].x][myBody[i].y] -= 20
-        }
-        scoreGrid[myHead.x][myHead.y] -= 10;
-        scoreGrid[myNeck.x][myNeck.y] -= 10;
-
-        getAdjacentCells(myBody, gameState.board).forEach(
-            cell => scoreGrid[cell.x][cell.y] -= 5
-        )
-    }
-    function scoreFood(gameState, scoreGrid) {
-        // food increases cell score
-        for (let i = 0; i < gameState.board.food.length; i++) {
-            scoreGrid[gameState.board.food[i].x][gameState.board.food[i].y] += isHungry ? 10 : -6
-        }
-        // cells adjacent to food get a bonus
-        getAdjacentCells(gameState.board.food, gameState.board).forEach(
-            cell => cell += isHungry ? 5 : 2
-        )
-    }
-
-    function scoreNextMove() {
-        const scoreGrid = createScoreGrid(gameState)
-        const head = myHead
-        // get scores of cells adjacent to head
-        scoreGrid[head.x + 1] = scoreGrid[head.x + 1] || []
-        scoreGrid[head.y + 1] = scoreGrid[head.y + 1] || []
-        scoreGrid[-1] = scoreGrid[-1] || []
-        const score = {
-            up: scoreGrid[head.x][head.y + 1],
-            down: scoreGrid[head.x][head.y - 1],
-            left: scoreGrid[head.x - 1][head.y],
-            right: scoreGrid[head.x + 1][head.y]
-        }
-        Object.values(score).forEach((value, index) => {
-            if (value < 0) Object.values(possibleMoves)[index] = false
-        })
-        const safeMoves = Object.keys(possibleMoves).filter(
-            key => possibleMoves[key]
-        )
-        const sortedMoves = safeMoves.sort((a, b) => {
-            return score[b] - score[a]
-        })
-        // sort possible moves by score
-        const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
-        console.table(scoreGrid)
-
-        return bestMove
-    }
-
-    function boundaryCheck() {
-        const edges = {
-            up: myHead.y === board.y,
-            down: myHead.y === 0,
-            left: myHead.x === 0,
-            right: myHead.x === board.x,
-        }
-        let moves = Object.values(possibleMoves);
-        Object.values(edges).forEach((edge, index) => {
-            if (edge) moves[index] = false;
-        })
-        possibleMoves = {
-            up: moves[0],
-            down: moves[1],
-            left: moves[2],
-            right: moves[3]
-        }
-    }
-    boundaryCheck();
-
-    const response = {
-        move: scoreNextMove()
-    }
-
-    console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
-    return response
+    return possibleMoves
 }
+function chooseMove(myHead, scoreGrid, possibleMoves) {    // get scores of cells adjacent to head
+    scoreGrid[myHead.x + 1] = scoreGrid[myHead.x + 1] || []
+    scoreGrid[myHead.y + 1] = scoreGrid[myHead.y + 1] || []
+    scoreGrid[-1] = scoreGrid[-1] || []
+    const score = {
+        up: scoreGrid[myHead.x][myHead.y + 1],
+        down: scoreGrid[myHead.x][myHead.y - 1],
+        left: scoreGrid[myHead.x - 1][myHead.y],
+        right: scoreGrid[myHead.x + 1][myHead.y]
+    }
+    Object.values(score).forEach((value, index) => {
+        if (value < 0) Object.values(possibleMoves)[index] = false
+    })
+    const safeMoves = Object.keys(possibleMoves).filter(
+        key => possibleMoves[key]
+    )
+    const sortedMoves = safeMoves.sort((a, b) => {
+        return score[b] - score[a]
+    })
+    // sort possible moves by score
+    const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
+    return bestMove
+}
+
+    // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
+function createScoreGrid(board, you) {
+    const scoreGrid = []
+    // initial score grid
+    for (let i = 0; i < board.width; i++) {
+        scoreGrid[i] = []
+        for (let j = 0; j < board.height; j++) {
+            scoreGrid[i][j] = 10
+        }
+    }
+    scoreSelf(scoreGrid, board, you)
+    scoreFood(scoreGrid, board, board.food, true)
+    scoreSnakes(scoreGrid, board.snakes, board)
+    return scoreGrid
+}
+function scoreSelf(scoreGrid, board, you) {
+    const myBody = you.body
+    for (let i = 0; i < myBody.length; i++) {
+        scoreGrid[myBody[i].x][myBody[i].y] -= 20
+    }
+    scoreGrid[you.head.x][you.head.y] -= 30;
+    scoreGrid[you.neck.x][you.neck.y] -= 79;
+
+    getAdjacentCells(you.body, board).forEach(
+        cell => scoreGrid[cell.x][cell.y] -= 5
+    )
+}
+function scoreFood(scoreGrid, board, food, isHungry = true) {
+    // food increases cell score
+    for (let i = 0; i < food.length; i++) {
+        scoreGrid[food[i].x][food[i].y] += isHungry ? 10 : -6
+    }
+    // cells adjacent to food get a bonus
+    getAdjacentCells(food, board).forEach(
+        cell => cell += isHungry ? 5 : 2
+    )
+}
+function scoreSnakes(scoreGrid, snakes, board) {
+    // get coordinates of all snake positions
+    const snakeCoords = []
+    for (let i = 0; i < snakes.length; i++) {
+        for (let j = 0; j < snakes[i].body.length; j++) {
+            snakeCoords.push(snakes[i].body[j])
+        }
+    }
+    snakeCoords.forEach(coord => {
+        scoreGrid[coord.x][coord.y] -= 12
+    })
+    getAdjacentCells(snakeCoords, board).forEach(
+        cell => scoreGrid[cell.x][cell.y] -= 8
+    )
+}
+
 
 function getAdjacentCells(cells, area) {
     const adjacentCells = []
