@@ -23,7 +23,7 @@ function createBattlesnake(id, bodyCoords) {
     return {
         id: id,
         name: id,
-        health: 0,
+        health: 100,
         body: bodyCoords,
         latency: "",
         head: bodyCoords[0],
@@ -60,7 +60,11 @@ describe('Avoid Walls', () => {
     })
     test('should never move past right edge', () => {
         // Arrange
-        const me = createBattlesnake("me", [{ x: 6, y: 3 }, { x: 6, y: 4 }, { x: 6, y: 5 }])
+        const me = createBattlesnake("me", [
+            { x: 6, y: 3 },
+            { x: 6, y: 4 },
+            { x: 6, y: 5 }
+        ])
         const gameState = createGameState(me)
     
         // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
@@ -79,8 +83,6 @@ describe('Avoid Walls', () => {
             { x: 5, y: 0 }
         ])
         const gameState = createGameState(me)
-    
-        test
         // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
