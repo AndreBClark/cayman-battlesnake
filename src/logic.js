@@ -37,34 +37,21 @@ function move(gameState) {
     return response
 }
 
+function chooseMove(myHead, scoreGrid, possibleMoves) {
+    // get scores from adjacent cells
+    const adjacentScores = getAdjacentCells(myHead, scoreGrid)
+        .map(cell => scoreGrid[cell.x][cell.y])
+    // foreach negative adjacent score set possiblemoves to false
+    adjacentScores.forEach((score, index) => {
+        Object.values(possibleMoves)[index] = score < 0
     })
     const safeMoves = Object.keys(possibleMoves)
+        .filter(key => possibleMoves[key])
+    // sort possible moves by adjacentscore
+    const sortedMoves = safeMoves
+        .sort((a, b) => adjacentScores[safeMoves[a]] - adjacentScores[safeMoves[b]])
+    return sortedMoves[sortedMoves.length - 1]
 }
-function chooseMove(myHead, scoreGrid, possibleMoves) {    // get scores of cells adjacent to head
-    scoreGrid[myHead.x + 1] = scoreGrid[myHead.x + 1] || []
-    scoreGrid[myHead.y + 1] = scoreGrid[myHead.y + 1] || []
-    scoreGrid[-1] = scoreGrid[-1] || []
-    const score = {
-        up: scoreGrid[myHead.x][myHead.y + 1],
-        down: scoreGrid[myHead.x][myHead.y - 1],
-        left: scoreGrid[myHead.x - 1][myHead.y],
-        right: scoreGrid[myHead.x + 1][myHead.y]
-    }
-    Object.values(score).forEach((value, index) => {
-        if (value < 0) Object.values(possibleMoves)[index] = false
-    })
-    const safeMoves = Object.keys(possibleMoves).filter(
-        key => possibleMoves[key]
-    )
-    const sortedMoves = safeMoves.sort((a, b) => {
-        return score[b] - score[a]
-    })
-    // sort possible moves by score
-    const bestMove = (sortedMoves.length === 0) ? sortedMoves[random(sortedMoves.length)] : sortedMoves[0]
-    return bestMove
-}
-
-    // Use information in gameState to prevent your Battlesnake from moving beyond the boundaries of the board.
 function createScoreGrid(board, you) {
     const scoreGrid = []
     // initial score grid
