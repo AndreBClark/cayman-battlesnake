@@ -54,7 +54,7 @@ describe('Avoid Walls', () => {
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move left.
-            const allowedMoves = ["down", "right"]
+            const allowedMoves = ["up", "down", "right"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
