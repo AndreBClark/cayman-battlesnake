@@ -75,13 +75,13 @@ function createScoreGrid(board, you) {
         }
     }
     scoreSelf(scoreGrid, board, you)
-    scoreFood(scoreGrid, board, board.food, true)
+    scoreFood(scoreGrid, board, board.food, you.isHungry)
     scoreSnakes(scoreGrid, board.snakes, board)
     return scoreGrid
 }
 function scoreSelf(scoreGrid, board, you) {
     const myBody = you.body
-    for (let i = 0; i < myBody.length; i++) {
+    for (let i = 0; i < you.length - 1; i++) {
         scoreGrid[myBody[i].x][myBody[i].y] -= 20
     }
     scoreGrid[you.head.x][you.head.y] -= 30;
@@ -91,7 +91,7 @@ function scoreSelf(scoreGrid, board, you) {
         cell => scoreGrid[cell.x][cell.y] -= 5
     )
 }
-function scoreFood(scoreGrid, board, food, isHungry = true) {
+function scoreFood(scoreGrid, board, food, isHungry) {
     // food increases cell score
     for (let i = 0; i < food.length; i++) {
         scoreGrid[food[i].x][food[i].y] += isHungry ? 10 : -6
