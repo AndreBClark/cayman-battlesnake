@@ -19,46 +19,26 @@ function end(gameState) {
 }
 function move(gameState) {
     const { you, board } = gameState
+    let possibleMoves = {
+        up: you.head.y < board.height - 1,
+        down: you.head.y > 0,
+        left: you.head.x > 0,
+        right: you.head.x < board.width - 1,
+    };
     you.neck = you.body[1]
-    board.edge = {
-        width: gameState.board.width - 1,
-        height: gameState.board.height - 1
-    }
-    const possibleMoves = boundaryCheck(you.head, board);
+    you.isHungry = you.health < 50
     const scoreGrid = createScoreGrid(board, you)
-    const choice = chooseMove(you.head, scoreGrid, possibleMoves)
     // TODO: Step 1 - Don't hit walls.
     const response = {
-        move: choice,
+        move: chooseMove(you.head, scoreGrid, possibleMoves)
     }
 
     console.log(`${gameState.game.id} MOVE ${gameState.turn}: ${response.move}`)
     return response
 }
-function boundaryCheck(myHead, board) {
-    let possibleMoves = {
-        up: true,
-        down: true,
-        left: true,
-        right: true
-    }
-    const edges = {
-        up: myHead.y === board.edge.height,
-        down: myHead.y === 0,
-        left: myHead.x === 0,
-        right: myHead.x === board.edge.width,
-    }
-    let moves = Object.values(possibleMoves);
-    Object.values(edges).forEach((edge, index) => {
-        if (edge) moves[index] = false;
+
     })
-    possibleMoves = {
-        up: moves[0],
-        down: moves[1],
-        left: moves[2],
-        right: moves[3]
-    }
-    return possibleMoves
+    const safeMoves = Object.keys(possibleMoves)
 }
 function chooseMove(myHead, scoreGrid, possibleMoves) {    // get scores of cells adjacent to head
     scoreGrid[myHead.x + 1] = scoreGrid[myHead.x + 1] || []
