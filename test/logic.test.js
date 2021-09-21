@@ -41,7 +41,7 @@ describe('Battlesnake API Version', () => {
     })
 })
 describe('Avoid Walls', () => {
-    test('should never move past the left edge', () => {
+    test('left edge', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 2 },
@@ -58,7 +58,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('should never move past right edge', () => {
+    test('right edge', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 6, y: 3 },
@@ -75,7 +75,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('should never move past bottom edge', () => {
+    test('bottom edge', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 3, y: 0 },
@@ -91,7 +91,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('should never move past top edge', () => {
+    test('top edge', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 3, y: 6 },
@@ -108,7 +108,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('avoid bottom left corner', () => {
+    test('left corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 0 },
@@ -125,7 +125,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('avoid top right corner', () => {
+    test('right corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 6, y: 6 },
@@ -142,7 +142,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('avoid top left corner', () => {
+    test('left corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 6 },
@@ -159,7 +159,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    test('avoid bottom right corner', () => {
+    test('bottom right corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 6, y: 0 },
@@ -178,16 +178,20 @@ describe('Avoid Walls', () => {
     })
 })
 
-describe('Avoid Snakes', () => {
-    test('should never move into its own neck', () => {
+describe('Prevent Ouroborus', () => {
+    test('should avoid own neck', () => {
         // Arrange
-        const me = createBattlesnake("me", [{ x: 2, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 0 }])
+        const me = createBattlesnake("me", [
+            { x: 6, y: 1 },
+            { x: 5, y: 1 },
+            { x: 4, y: 1 }
+        ])
         const gameState = createGameState(me)
         // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move left.
-            const allowedMoves = ["up", "down", "right"]
+            const allowedMoves = ["up", "down"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
@@ -211,6 +215,8 @@ describe('Avoid Snakes', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
+})
+describe('Prevent Cannibalism', () => {
     test('should never move into a snake', () => {
         // Arrange
         const me = createBattlesnake("me", [
