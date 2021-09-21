@@ -50,7 +50,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
     
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move left.
@@ -67,7 +67,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
     
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move right.
@@ -83,7 +83,7 @@ describe('Avoid Walls', () => {
             { x: 5, y: 0 }
         ])
         const gameState = createGameState(me)
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up.
@@ -100,7 +100,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
     
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move down.
@@ -117,7 +117,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
 
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move down or left.
@@ -134,7 +134,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
 
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up or right.
@@ -151,7 +151,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
 
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up or left.
@@ -168,7 +168,7 @@ describe('Avoid Walls', () => {
         ])
         const gameState = createGameState(me)
         
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move down or right.
@@ -187,7 +187,6 @@ describe('Prevent Ouroborus', () => {
             { x: 4, y: 1 }
         ])
         const gameState = createGameState(me)
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move left.
@@ -206,8 +205,6 @@ describe('Prevent Ouroborus', () => {
             { x: 2, y: 1 }
         ])
         const gameState = createGameState(me)
-    
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up.
@@ -232,7 +229,7 @@ describe('Prevent Cannibalism', () => {
         const gameState = createGameState(me)
         gameState.board.snakes.push(enemy)
 
-        // Act 1,000x (this isn't a great way to test, but it's okay for starting out)
+        
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up.
