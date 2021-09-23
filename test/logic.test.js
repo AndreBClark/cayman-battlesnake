@@ -208,7 +208,7 @@ describe('Prevent Ouroborus', () => {
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up.
-            const allowedMoves = ["left", "down", "right"]
+            const allowedMoves = ["right"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
