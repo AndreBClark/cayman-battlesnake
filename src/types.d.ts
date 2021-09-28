@@ -1,5 +1,3 @@
-// See https://docs.battlesnake.com/references/api for all details and examples.
-
 export interface InfoResponse {
   apiversion: string;
   author?: string;
@@ -10,7 +8,7 @@ export interface InfoResponse {
 }
 
 export interface MoveResponse {
-  move: string;
+  move: Move;
   shout?: string;
 }
 
@@ -37,12 +35,11 @@ export interface Battlesnake {
   // Used in non-standard game modes
   shout: string;
   squad: string;
-  neck?: Coord;
+  neck?: Coord | body[1];
 }
 
 export interface You extends Battlesnake {
   isHungry?: boolean;
-  neck: Coord
 }
 
 export interface Board {
@@ -65,9 +62,11 @@ export interface GameState {
 export interface ScoreGrid {
   [index: number]: number[]
 }
-export type Move = 'up' | 'down' | 'left' | 'right';
+
+export type Move =
+  'up' | 'down' | 'left' | 'right';
 export type Moves = { [key in Move]: boolean };
-export type MovesIndex = boolean[]
+export type MovesArray = boolean[]
 
 type ObjectKeys<T> = 
   T extends object ? (keyof T)[] :
