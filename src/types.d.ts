@@ -19,13 +19,10 @@ export interface Game {
   ruleset: { name: string; version: string };
   timeout: number;
 }
+
 export interface Coord {
   x: number;
   y: number;
-}
-
-export interface ScoreGrid {
-  [index: number]: number[]
 }
 
 export interface Battlesnake {
@@ -38,18 +35,23 @@ export interface Battlesnake {
   length: number;
 
   // Used in non-standard game modes
-  shout?: string;
-  squad?: string;
-  isHungry?: boolean;
-  neck?: Coord
+  shout: string;
+  squad: string;
+  neck?: Coord;
 }
+
+export interface You extends Battlesnake {
+  isHungry?: boolean;
+  neck: Coord
+}
+
 export interface Board {
   height: number;
   width: number;
   food: Coord[];
   snakes: Battlesnake[];
 
-  // Used in non-standayourd game modes
+  // Used in non-standard game modes
   hazards: Coord[];
 }
 
@@ -57,21 +59,25 @@ export interface GameState {
   game: Game;
   turn: number;
   board: Board;
-  you: Battlesnake;
+  you: You;
+}
+
+export interface ScoreGrid {
+  [index: number]: number[]
 }
 export type Move = 'up' | 'down' | 'left' | 'right';
 export type Moves = { [key in Move]: boolean };
 export type MovesIndex = boolean[]
 
-// type ObjectKeys<T> = 
-//   T extends object ? (keyof T)[] :
-//   T extends number ? [] :
-//   T extends Move[] ? Move[] :
-//   T extends Array<any> | string ? string[] :
-//   never;
+type ObjectKeys<T> = 
+  T extends object ? (keyof T)[] :
+  T extends number ? [] :
+  T extends Move[] ? Move[] :
+  T extends Array<any> | string ? string[] :
+  never;
 
-// export declare global {
-//   interface ObjectConstructor {
-//     keys<T>(o: T): ObjectKeys<T>;
-//   }
-// }
+export declare global {
+  interface ObjectConstructor {
+    keys<T>(o: T): ObjectKeys<T>;
+  }
+}
