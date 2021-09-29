@@ -1,4 +1,4 @@
-import { InfoResponse, GameState, MoveResponse, Coord, ScoreGrid, Board, Moves, Move, Battlesnake, You } from "./types"
+import { InfoResponse, GameState, MoveResponse, Coord, ScoreGrid, Board, Moves, Move, Battlesnake, You, MovesArray } from "./types"
 
 export function info(): InfoResponse {
     console.log("INFO")
@@ -32,9 +32,9 @@ export function move(gameState: GameState): MoveResponse {
         right: myHead.x < gameState.board.width - 1,
     };
     if (myNeck.x < myHead.x) possibleMoves.left = false
-    if (myNeck.x > myHead.x) possibleMoves.right = false
-    if (myNeck.y < myHead.y) possibleMoves.down = false
-    if (myNeck.y > myHead.y) possibleMoves.up = false
+    else if (myNeck.x > myHead.x) possibleMoves.right = false
+    else if (myNeck.y < myHead.y) possibleMoves.down = false
+    else if (myNeck.y > myHead.y) possibleMoves.up = false
 
     const scoreGrid: ScoreGrid = createScoreGrid(gameState.board, gameState.you)
     const response: MoveResponse = {
@@ -46,13 +46,36 @@ export function move(gameState: GameState): MoveResponse {
 }
 
 function getMove(myHead: Coord, board: Board, Grid: ScoreGrid, moves: Moves): Move {
-    console.log(moves)
+    // convert moves Object to array
     // get all adjacent cells
     const adjacentCoords: Coord[] = getAdjacentCells(myHead, board)
     // retrieve the score of each adjacent cell
     const adjacentScores: number[] = adjacentCoords.map(
         (coord: Coord) => Grid[coord.x][coord.y]
-    );
+        );
+    let movesArray: MovesArray = Object.values(moves);
+    let movesKeys: Move[] = Object.keys(moves)
+    // if adjacent score is negative, remove move
+    for (let i = 0; i < movesKeys.length; i++) {
+        if (adjacentScores[i] < 0) movesArray[i] = false
+    }
+    // if move is false remove the element from the move array
+    for (let i = 0; i < movesKeys.length; i++) {
+        if (!movesArray[i]) {
+            movesArray.splice(i, 1);
+            movesKeys.splice(i, 1);
+        }
+    }
+    console.table(movesKeys)
+    console.table(adjacentScores)
+    // find the highest score
+    const highestScore: number = Math.max(...adjacentScores);
+    console.log(`highest Score: ${highestScore}`)
+    // find the index of the highest score
+    const highestScoreIndex: number = adjacentScores.indexOf(highestScore);
+    console.log(`highest score index: ${highestScoreIndex}`)
+    // return the move with the highest score
+    return movesKeys[highestScoreIndex];
 }
 
 function createScoreGrid(board: Board, you: You): ScoreGrid {
@@ -67,6 +90,7 @@ function createScoreGrid(board: Board, you: You): ScoreGrid {
     scoreSelf(scoreGrid, board, you)
     scoreFood(scoreGrid, board, board.food, you)
     scoreSnakes(scoreGrid, board.snakes, board, you)
+    console.table(scoreGrid)
     return scoreGrid
 }
 function scoreSelf(scoreGrid: ScoreGrid, board: Board, you: You): void {
@@ -82,13 +106,15 @@ function scoreSelf(scoreGrid: ScoreGrid, board: Board, you: You): void {
     )
 }
 function scoreFood(Grid: ScoreGrid, board: Board, food: Coord[], you: You): void {
+    console.log(`health: ${you.health}`)
     // food increases cell score
     for (let i = 0; i < food.length; i++) {
-        Grid[food[i].x][food[i].y] += you.isHungry ? 10 : -6
+        Grid[food[i].x][food[i].y] += you.isHungry ? 10 : -1
     }
     // cells adjacent to food get a bonus
     getAdjacentCells(food, board).forEach(
-        cell => Grid[cell.x][cell.y] += you.isHungry ? 5 : 2)
+        cell => Grid[cell.x][cell.y] += you.isHungry ? 5 : 0
+    )
 }
 function scoreSnakes(Grid: ScoreGrid, snakes: Battlesnake[], board: Board, you: Battlesnake): void {
     // get coordinates of all snake positions
@@ -101,10 +127,10 @@ function scoreSnakes(Grid: ScoreGrid, snakes: Battlesnake[], board: Board, you: 
         }
     }
     snakeCoords.forEach(coord => {
-        Grid[coord.x][coord.y] -= 12
+        Grid[coord.x][coord.y] -= 11
     })
     getAdjacentCells(snakeCoords, board).forEach(
-        cell => Grid[cell.x][cell.y] -= 8
+        cell => Grid[cell.x][cell.y] -= 5
     )
 }
 

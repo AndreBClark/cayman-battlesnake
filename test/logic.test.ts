@@ -24,7 +24,7 @@ function createBattlesnake(id: string, body: Coord[]): Battlesnake & You {
     return {
         id: id,
         name: id,
-        health: 0,
+        health: 100,
         body: body,
         latency: "",
         head: body[0],
@@ -108,7 +108,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    it('left corner', () => {
+    it('bottom left corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 0 },
@@ -125,7 +125,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    it('right corner', () => {
+    it('Top right corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 3, y: 3 },
@@ -142,7 +142,7 @@ describe('Avoid Walls', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    it('left corner', () => {
+    it('Top left corner', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 3 },
@@ -178,37 +178,108 @@ describe('Avoid Walls', () => {
     })
 })
 
-// describe('Prevent Ouroborus', () => {
-//     it('should avoid own neck', () => {
-//         // Arrange
-//         const me = createBattlesnake("me", [
-//             { x: 3, y: 1 },
-//             { x: 2, y: 1 },
-//             { x: 1, y: 1 }
-//         ])
-//         const gameState = createGameState(me)
-//         for (let i = 0; i < testCount; i++) {
-//             const moveResponse: MoveResponse = move(gameState)
-//             const allowedMoves = ["up", "down"]
-//             expect(allowedMoves).toContain(moveResponse.move)
-//         }
-//     })
-//     it('should never collide with itself', () => {
-//         // Arrange
-//         const me = createBattlesnake("me", [
-//             { x: 2, y: 0 },
-//             { x: 1, y: 0 },
-//             { x: 0, y: 0 },
-//             { x: 0, y: 1 },
-//             { x: 1, y: 1 },
-//             { x: 2, y: 1 }
-//         ])
-//         const gameState = createGameState(me)
-//         for (let i = 0; i < testCount; i++) {
-//             const moveResponse: MoveResponse = move(gameState)
-//             // In this state, we should NEVER move up.
-//             const allowedMoves = ["right"]
-//             expect(allowedMoves).toContain(moveResponse.move)
-//         }
-//     })
-// })
+describe('Prevent Ouroborus', () => {
+    it('should avoid own neck', () => {
+        // Arrange
+        const me = createBattlesnake("me", [
+            { x: 3, y: 1 },
+            { x: 2, y: 1 },
+            { x: 1, y: 1 }
+        ])
+        const gameState = createGameState(me)
+        for (let i = 0; i < testCount; i++) {
+            const moveResponse: MoveResponse = move(gameState)
+            const allowedMoves = ["up", "down"]
+            expect(allowedMoves).toContain(moveResponse.move)
+        }
+    })
+    it('should never collide with itself', () => {
+        // Arrange
+        const me = createBattlesnake("me", [
+            { x: 2, y: 2 },
+            { x: 2, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 3 },
+        ])
+        const gameState = createGameState(me)
+        for (let i = 0; i < testCount; i++) {
+            const moveResponse: MoveResponse = move(gameState)
+            // In this state, we should NEVER move up.
+            const allowedMoves = ["right"]
+            expect(allowedMoves).toContain(moveResponse.move)
+        }
+    })
+})
+describe('Prevent Cannibalism', () => {
+    test('should never move into a snake', () => {
+        // Arrange
+        const me = createBattlesnake("me", [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 }
+        ])
+        const enemy = createBattlesnake("enemy", [
+            { x: 2, y: 1 },
+            { x: 1, y: 1 },
+            { x: 0, y: 1 }
+        ])
+        const gameState = createGameState(me)
+        gameState.board.snakes.push(enemy)
+
+        
+        for (let i = 0; i < testCount; i++) {
+            const moveResponse = move(gameState)
+            // In this state, we should NEVER move up.
+            const allowedMoves = ["left", "down", "right"]
+            expect(allowedMoves).toContain(moveResponse.move)
+        }
+    })
+})
+
+describe('Food', () => {
+    test('eats when Hungry', () => {
+        // Arrange
+        const me = createBattlesnake("me", [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 }
+        ])
+        me.health = 49
+        const gameState = createGameState(me)
+        gameState.board.food.push({ x: 3, y: 0 })
+    
+        // Act
+        const moveResponse = move(gameState)
+    
+        // Assert
+        expect(moveResponse.move).toBe("right")
+    })
+    test('avoid eating when not Hungry', () => {
+        const me = createBattlesnake("me", [
+            { x: 2, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 0 }
+        ])
+        me.health = 100
+        const gameState = createGameState(me)
+        gameState.board.food.push({ x: 3, y: 0 })
+        
+        const moveResponse = move(gameState)
+
+        expect(moveResponse.move).toBe("up")
+    })
+    test('prefer food over death even when not hungry', () => {
+        const me = createBattlesnake("me", [
+            { x: 3, y: 0 },
+            { x: 2, y: 0 },
+            { x: 1, y: 0 }
+        ])
+        me.health = 100
+        const gameState = createGameState(me)
+        gameState.board.food.push({ x: 3, y: 1 })
+        
+        const moveResponse = move(gameState)
+
+        expect(moveResponse.move).toBe("up")
+    })
+})
