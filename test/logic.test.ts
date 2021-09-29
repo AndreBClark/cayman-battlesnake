@@ -196,16 +196,17 @@ describe('Prevent Ouroborus', () => {
     it('should never collide with itself', () => {
         // Arrange
         const me = createBattlesnake("me", [
-            { x: 2, y: 2 },
-            { x: 2, y: 1 },
-            { x: 1, y: 2 },
-            { x: 2, y: 3 },
+            { x: 0, y: 1 },
+            { x: 0, y: 0 },
+            { x: 1, y: 0 },
+            { x: 1, y: 1 }
+
         ])
         const gameState = createGameState(me)
         for (let i = 0; i < testCount; i++) {
             const moveResponse: MoveResponse = move(gameState)
             // In this state, we should NEVER move up.
-            const allowedMoves = ["right"]
+            const allowedMoves = ["up"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
@@ -230,7 +231,7 @@ describe('Prevent Cannibalism', () => {
         for (let i = 0; i < testCount; i++) {
             const moveResponse = move(gameState)
             // In this state, we should NEVER move up.
-            const allowedMoves = ["left", "down", "right"]
+            const allowedMoves = ["right"]
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
