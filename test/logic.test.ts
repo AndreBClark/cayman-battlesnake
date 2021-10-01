@@ -1,7 +1,7 @@
 import { info, move } from '../src/logic'
 import { Battlesnake, Coord, GameState, MoveResponse, You } from '../src/types';
 const testCount = 1;
-function createGameState(me: You): GameState {
+function createGameState(me: You | Battlesnake): GameState {
     return {
         game: {
             id: "",
@@ -179,7 +179,7 @@ describe('Avoid Walls', () => {
 })
 
 describe('Prevent Ouroborus', () => {
-    it('should avoid own neck', () => {
+    test('should avoid own neck', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 3, y: 1 },
@@ -193,14 +193,14 @@ describe('Prevent Ouroborus', () => {
             expect(allowedMoves).toContain(moveResponse.move)
         }
     })
-    it('should never collide with itself', () => {
+    test('should never collide with itself', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 0, y: 1 },
             { x: 0, y: 0 },
             { x: 1, y: 0 },
-            { x: 1, y: 1 }
-
+            { x: 1, y: 1 },
+            { x: 1, y: 2 }
         ])
         const gameState = createGameState(me)
         for (let i = 0; i < testCount; i++) {
@@ -212,7 +212,7 @@ describe('Prevent Ouroborus', () => {
     })
 })
 describe('Prevent Cannibalism', () => {
-    test('should never move into a snake', () => {
+    test('should never collide with a snake', () => {
         // Arrange
         const me = createBattlesnake("me", [
             { x: 2, y: 0 },

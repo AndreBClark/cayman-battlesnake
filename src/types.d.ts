@@ -65,7 +65,9 @@ export interface ScoreGrid {
 
 export type Move =
   'up' | 'down' | 'left' | 'right';
-export type Moves = { [key in Move]: boolean };
+export type Moves = {
+  [key in Move]: boolean
+};
 export type MovesArray = boolean[]
 
 type ObjectKeys<T> = 
